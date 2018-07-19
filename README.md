@@ -6,7 +6,7 @@ A simple daemonized script to report Pi-Hole stats to an InfluxDB, ready to be d
 
 ## Requirements and Setup
 
-As Pi-hole (as the name suggests) is built specifically with the Raspberry Pi in mind (and I run it on there as well), the following steps assume an instance of Pi-hole on Raspbian Strech Lite, with no additional modifications so far. Piholestatus will be configured to run on the same Pi. 
+As Pi-hole (as the name suggests) is built specifically with the Raspberry Pi in mind (and I run it on there as well), the following steps assume an instance of Pi-hole on Raspbian Strech Lite, with no additional modifications so far. Piholeinflux will be configured to run on the same Pi. 
 
 First install the necessary packages via apt as Raspbian Lite does have neither git nor pip installed.
 
@@ -15,19 +15,27 @@ sudo apt update
 sudo apt install git python-pip -y
 ```
 
-Now clone the repo, install the Python dependencies, and make sure to copy and adjust the example configuation file to match your setup.
+Now clone the repo, install the Python dependencies, and make sure to copy and adjust the example configuration file to match your setup.
 
 ```bash
-git clone https://github.com/janw/pi-hole-influx.git ~/pi-hole-influx
+git clone https://github.com/xneo1/pi-hole-influx.git
 cd ~/pi-hole-influx
 
 # Install requirements via pip
 pip install -r requirements.txt
 
-# Copy config.example and modify it (should be self-explanatory)
-cp config.ini.example config.ini
-vi config.ini
-```
+#Setup credentials ,Pi hole ip/port and influxdb ip/port
+
+sudo nano piholeinflux.pi
+and put the following details:
+
+HOSTNAME = "pihole" # Pi-hole hostname to report in InfluxDB for each measurement
+PIHOLE_API = "http://XXX.XXX.XXX.XXX/admin/api.php"
+INFLUXDB_SERVER = "XXX.XXX.XXX.XXX" # IP or hostname to InfluxDB server
+INFLUXDB_PORT = 8086 # Port on InfluxDB server
+INFLUXDB_USERNAME = "-----------"
+INFLUXDB_PASSWORD = "-----------"
+INFLUXDB_DATABASE = "-----------"
 
 Before starting the daemon for the first time, symlink the systemd service into place, reload, and enable the service.
 
