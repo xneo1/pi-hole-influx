@@ -57,9 +57,8 @@ sudo systemctl status piholeinflux.service
 
 The status should look as follows. Note the `Status:` line showing the last time, the daemon reported to InfluxDB:
 
-```
-![Example Grafana Dashboard](.readme-assets/activesvc.jpg)
-```
+![Active and Running Service](.readme-assets/activesvc.jpg)
+
 ## Set up a Grafana Dashboard 
 
 The example dashboard seen [at the top](#pi-hole-influx) uses the collected data and displays it in concise and sensible graphs and single stats. The dashboard can be imported into your Grafana instance from the `dashboard.json` file included in the repo, or by using ID `6603` to [import it from Grafana's Dashboard Directory](https://grafana.com/dashboards/6603).
