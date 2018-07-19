@@ -2,7 +2,7 @@
 
 A simple daemonized script to report Pi-Hole stats to an InfluxDB, ready to be displayed via Grafana.
 
-(Initially forked by[@Janw](https://github.com/janw/pi-hole-influx))
+(Initially forked by [@Janw](https://github.com/janw/pi-hole-influx))
 
 ![Example Grafana Dashboard](.readme-assets/dashboard.png)
 
