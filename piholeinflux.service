@@ -1,13 +1,12 @@
 
 [Unit]
 Description=Pi-hole-Influx - Send Pi-hole statistics to InfluxDB for visualization
-Documentation=https://github.com/janw/pi-hole-influx
+Documentation=https://github.com/xneo1/pi-hole-influx
 After=network-online.target
 
 [Service]
 User=pi
-Type=notify
-Environment=PYTHONUNBUFFERED=true
+Type=idle
 ExecStart=/usr/bin/python /home/pi/pi-hole-influx/piholeinflux.py
 Restart=always
 RestartSec=30
