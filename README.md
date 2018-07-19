@@ -32,7 +32,8 @@ vi config.ini
 Before starting the daemon for the first time, symlink the systemd service into place, reload, and enable the service.
 
 ```bash
-sudo ln -s /home/pi/pi-hole-influx/piholeinflux.service /etc/systemd/system/
+sudo systemctl link /home/pi/pi-hole-influx/piholeinflux.service
+
 sudo systemctl --system daemon-reload
 sudo systemctl enable piholeinflux.service
 ```
