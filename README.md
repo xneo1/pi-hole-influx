@@ -1,4 +1,4 @@
-# Pi-hole-Influx
+# Pi-hole-Influx to Grafana
 
 A simple daemonized script to report Pi-Hole stats to an InfluxDB, ready to be displayed via Grafana.
 
