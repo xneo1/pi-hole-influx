@@ -59,7 +59,7 @@ The status should look as follows. Note the `Status:` line showing the last time
 ● piholeinflux.service - Pi-hole-Influx - Send Pi-hole statistics to InfluxDB for visualization
    Loaded: loaded (/home/pi/pi-hole-influx/piholeinflux.service; enabled; vendor preset: enabled)
    Active: active (running) since Fri 2018-06-22 19:03:56 UTC; 10min ago
-     Docs: https://github.com/janw/pi-hole-influx
+     Docs: https://github.com/xneo1/pi-hole-influx
  Main PID: 21329 (python)
    Status: "Reported to InfluxDB at 2018-06-22 19:14:09 +0000"
    CGroup: /system.slice/piholeinflux.service
@@ -75,4 +75,4 @@ The example dashboard seen [at the top](#pi-hole-influx) uses the collected data
 
 ## Attributions
 
-The script originally [created by Jon Hayward](https://fattylewis.com/Graphing-pi-hole-stats/), adapted to work with InfluxDB [by /u/tollsjo in December 2016](https://github.com/sco01/piholestatus), and [improved and extended by @johnappletree](https://github.com/johnappletree/piholestatus). "If I have seen further it is by standing on the shoulders of giants". 🤓
+The script originally [created by Jon Hayward](https://fattylewis.com/Graphing-pi-hole-stats/), adapted to work with InfluxDB [by /u/tollsjo in December 2016](https://github.com/sco01/piholestatus), and [improved and extended by @johnappletree](https://github.com/johnappletree/piholestatus).
