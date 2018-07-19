@@ -1,68 +1,66 @@
+
 #! /usr/bin/python
 
-from __future__ import print_function
+# Script originally created by JON HAYWARD: https://fattylewis.com/Graphing-pi-hole-stats/
+# Adapted to work with InfluxDB by /u/tollsjo in December 2016
+# Updated by Cludch December 2016
+# more stability and extra features by johnappletree | March 2018
+
+
 import requests
-from time import sleep, localtime, strftime
+import time
 from influxdb import InfluxDBClient
-from configparser import ConfigParser
-from os import path
-import traceback
-import sdnotify
-from datetime import datetime
-import sys
 
-HERE = path.dirname(path.realpath(__file__))
-config = ConfigParser()
-config.read(path.join(HERE, 'config.ini'))
+HOSTNAME = "pihole" # Pi-hole hostname to report in InfluxDB for each measurement
+PIHOLE_API = "http://XXX.XXX.XXX.XXX/admin/api.php"
+INFLUXDB_SERVER = "XXX.XXX.XXX.XXX" # IP or hostname to InfluxDB server
+INFLUXDB_PORT = 8086 # Port on InfluxDB server
+INFLUXDB_USERNAME = "-----------"
+INFLUXDB_PASSWORD = "-----------"
+INFLUXDB_DATABASE = "-----------"
+DELAY = 10 # seconds
 
-HOSTNAME = config['pihole']['instance_name']
-PIHOLE_API = config['pihole']['api_location']
-DELAY = config['pihole'].getint('reporting_interval', 10)
+def send_msg(domains_blocked, dns_queries_today, ads_percentage_today, ads_blocked_today):
 
-INFLUXDB_SERVER = config['influxdb'].get('hostname', '127.0.0.1')
-INFLUXDB_PORT = config['influxdb'].getint('port', 8086)
-INFLUXDB_USERNAME = config['influxdb']['username']
-INFLUXDB_PASSWORD = config['influxdb']['password']
-INFLUXDB_DATABASE = config['influxdb']['database']
+        json_body = [
+            {
+                "measurement": "piholestats." + HOSTNAME.replace(".", "_"),
+                "tags": {
+                    "host": HOSTNAME
+                },
+                "fields": {
+                    "domains_blocked": int(domains_blocked),
+                    "dns_queries_today": int(dns_queries_today),
+                    "ads_percentage_today": float(ads_percentage_today),
+                    "ads_blocked_today": int(ads_blocked_today),
+                    "unique_domains": int(unique_domains),
+                    "queries_forwarded": int(queries_forwarded),
+                    "queries_cached": int(queries_cached),
+                    "clients_ever_seen": int(clients_ever_seen)
+                }
+            }
+        ]
 
-INFLUXDB_CLIENT = InfluxDBClient(INFLUXDB_SERVER,
-                                 INFLUXDB_PORT,
-                                 INFLUXDB_USERNAME,
-                                 INFLUXDB_PASSWORD,
-                                 INFLUXDB_DATABASE)
-
-n = sdnotify.SystemdNotifier()
-n.notify("READY=1")
-
-def send_msg(resp):
-    del resp['gravity_last_updated']
-
-    json_body = [
-        {
-            "measurement": "pihole",
-            "tags": {
-                "host": HOSTNAME
-            },
-            "fields": resp
-        }
-    ]
-
-    INFLUXDB_CLIENT.write_points(json_body)
-
+        client = InfluxDBClient(INFLUXDB_SERVER, INFLUXDB_PORT, INFLUXDB_USERNAME, INFLUXDB_PASSWORD, INFLUXDB_DATABASE) # InfluxDB host, InfluxDB port, Username, Password, database
+        # client.create_database(INFLUXDB_DATABASE) # Uncomment to create the database (expected to exist prior to feeding it data)
+        client.write_points(json_body)
 
 if __name__ == '__main__':
-    while True:
-        try:
-            api = requests.get(PIHOLE_API)  # URI to pihole server api
-            send_msg(api.json())
-            timestamp = strftime('%Y-%m-%d %H:%M:%S %z', localtime())
-            n.notify('STATUS=Reported to InfluxDB at {}'.format(timestamp))
+        while True:
+                try:
+                        api = requests.get(PIHOLE_API) # URI to pihole server api
+                        API_out = api.json()
+                        domains_blocked = (API_out['domains_being_blocked'])
+                        dns_queries_today = (API_out['dns_queries_today'])
+                        ads_percentage_today = (API_out['ads_percentage_today'])
+                        ads_blocked_today = (API_out['ads_blocked_today'])
+                        unique_domains = (API_out['unique_domains'])
+                        queries_forwarded = (API_out['queries_forwarded'])
+                        queries_cached = (API_out['queries_cached'])
+                        clients_ever_seen = (API_out['clients_ever_seen'])
 
-        except Exception as e:
-            msg = 'Failed, to report to InfluxDB:'
-            n.notify('STATUS={} {}'.format(msg, str(e)))
-            print(msg, str(e))
-            print(traceback.format_exc())
-            sys.exit(1)
-
-        sleep(DELAY)
+                        send_msg(domains_blocked, dns_queries_today, ads_percentage_today, ads_blocked_today)
+                        time.sleep(DELAY)
+                except:
+                        print('piholeinflux script failed')
+                        time.sleep(DELAY)
